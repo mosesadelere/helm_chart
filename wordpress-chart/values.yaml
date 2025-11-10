@@ -1,0 +1,119 @@
+# Default values for WordPress chart
+
+# WordPress image configuration
+image:
+  repository: wordpress
+  tag: 6.5.2-apache
+  pullPolicy: IfNotPresent
+
+# WordPress service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# WordPress deployment configuration
+wordpress:
+  replicaCount: 1
+  
+  # WordPress configurations
+  wordpressBlogName: "My WordPress Site"
+  wordpressEmail: "admin@example.com"
+  
+  # Database connection details
+  database:
+    host: wordpress-mysql
+    name: wordpress
+    user: wordpress
+    
+  # Resource limits and requests
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  
+  # Liveness and readiness probes
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+# MySQL database configuration
+mysql:
+  enabled: true
+  image:
+    repository: mysql
+    tag: 8.0
+    pullPolicy: IfNotPresent
+  
+  rootPassword: "rootpassword"
+  password: "wordpresspassword"
+  database: "wordpress"
+  user: "wordpress"
+  
+  service:
+    port: 3306
+  
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+  
+  persistence:
+    enabled: true
+    size: 8Gi
+    
+  # Liveness and readiness probes
+  livenessProbe:
+    exec:
+      command:
+        - mysqladmin
+        - ping
+        - -h
+        - localhost
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  
+  readinessProbe:
+    exec:
+      command:
+        - mysql
+        - -h
+        - localhost
+        - -e
+        - SELECT 1
+    initialDelaySeconds: 5
+    periodSeconds: 2
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# Node selector for pod assignment
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

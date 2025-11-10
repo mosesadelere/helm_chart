@@ -1,0 +1,17 @@
+apiVersion: v2
+name: wordpress-chart
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+keywords:
+  - wordpress
+  - blog
+  - cms
+home: https://wordpress.org
+sources:
+  - https://github.com/wordpress/wordpress
+maintainers:
+  - name: team1
+    email: team1@examples.com
+icon: https://wordpress.org/favicon.ico
